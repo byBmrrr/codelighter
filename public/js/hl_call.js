@@ -21,7 +21,7 @@ hljs.highlightAll();
 let clCode = document.querySelector('pre code');
 let clPre = clCode.parentElement;
 let clPreClass = clPre.className;
-setTimeout(() => {console.log(document.querySelector('.hljs'))}, 10000);
+setTimeout(() => { console.log(document.querySelector('.hljs')) }, 10000);
 //clPre.className = '';
 let clColor = clCode.style.color;
 clPre.className = clPreClass;
