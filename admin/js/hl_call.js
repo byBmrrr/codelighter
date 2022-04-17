@@ -42,7 +42,7 @@ hljs.configure({
  * Link formation for choosed style
  *  *******************************************************************************
  */
-let clSelectTag = document.querySelector('#codelighter-option-styles');
+let clSelectTag = document.querySelector('#codelighter-option-style');
 const getHlScript = (e) => {
     let clStyle = document.querySelector('#highlight-css');
     let clPath = clStyle.href.split('/');
@@ -82,12 +82,48 @@ clSelectTag.addEventListener('change', getHlScript);
 const checkCopyColor = () => {
     let hljsBlockStyles = getComputedStyle(document.querySelector('.hljs '));
     let hljsBlockStylesColor = hljsBlockStyles.color;
-    document.getElementById('cl-sc').value = RGBToHex(hljsBlockStylesColor); //convert rgb color to hex and assign as value of input type=color
+    document.getElementById('codelighter_option_selected_color').value = RGBToHex(hljsBlockStylesColor); //convert rgb color to hex and assign as value of input type=color
     console.log('Text color in choose theme is %s', hljsBlockStylesColor);
 }
 
 let saveButton = document.getElementById('submit');
 saveButton.addEventListener('mouseenter', checkCopyColor);
+
+/*
+ *  *******************************************************************************
+ * AJAX call for check what post types checked
+ *  *******************************************************************************
+ */
+const fetchBody = {
+    action: 'cl_get_checked_post_types',
+}
+const fetchOptions = {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    },
+    body: new URLSearchParams(fetchBody),
+}
+
+
+fetch(ajaxurl, fetchOptions)
+    .then(response => response.json())
+    .then(result => {
+        let resultArray = Object.values(result);
+        console.log('%cChecked post types: %s', 'color: green; Tahoma;', resultArray.join(', '));
+        // let inputs = document.querySelectorAll('input[id^=codelighter_option_post_types-]');
+        // console.log(inputs);
+        let tmpInpt;
+        resultArray.forEach( item => {
+            tmpInpt = `input[id=codelighter_option_post_types-${item}]`;
+            if ( document.querySelector(tmpInpt)) {
+            document.querySelector(tmpInpt).checked = true;
+            }
+        })
+    })
+    .catch(function (err) {
+        console.error(err);
+    });
 
 /*
  *  *******************************************************************************

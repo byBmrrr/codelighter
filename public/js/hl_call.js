@@ -19,7 +19,7 @@
 hljs.highlightAll();
 
 const fetchBody = {
-    action: 'get_selected_color',
+    action: 'cl_get_selected_color',
 }
 const fetchOptions = {
     method: 'POST',
