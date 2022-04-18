@@ -24,10 +24,10 @@
 register_activation_hook( __FILE__, 'codelighter_by_bmrrr_activate' );
 
 function codelighter_by_bmrrr_activate() {
-	// delete_option( 'codelighter' );
+	delete_option( 'codelighter' );
 	if ( !get_option( 'codelighter' ) ) {
-		$all_post_types = get_post_type();
-		add_option( 'codelighter', array( 'style' => 'default', 'post-types' => [	] ) );
+		$all_post_types = get_post_type([], 'names');
+		add_option( 'codelighter', array( 'style' => 'default', 'post-types' => ['all'] ) );
 	}
 }
 
@@ -60,6 +60,14 @@ function codelighter_init() {
  *  *******************************************************************************
  */
 $codelighter_options = get_option( 'codelighter');
+function codelighter_by_bmrrr_check_post ($post_types) {
+	foreach($post_types as $post_type) {
+		if ( is_singular( $post_type ) ) {
+			return true;
+			break;
+		}
+	}
+}
 
 
 /*
@@ -71,16 +79,27 @@ $codelighter_options = get_option( 'codelighter');
 add_action('wp_enqueue_scripts', 'codelighter_enqueue_front', PHP_INT_MAX);
 function codelighter_enqueue_front() {
 	global $codelighter_options;
-	if ($codelighter_options)
-	wp_enqueue_style('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/'.$codelighter_options['style'].'.min.css');
-	wp_enqueue_script('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js', [], '11.4.0', 'in_footer');
-	wp_enqueue_script('highlight-call', plugins_url( 'public/js/hl_call.js', __FILE__), ['highlight'], '11.4.0', 'in_footer');
-	
-	wp_localize_script( 'highlight', 'hlajax',
-		array(
-			'url' => admin_url('admin-ajax.php')
-		)
-	);
+	if (isset($codelighter_options['post-types']) && $codelighter_options['post-types'] === ['all']) {
+		wp_enqueue_style('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/'.$codelighter_options['style'].'.min.css');
+		wp_enqueue_script('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js', [], '11.4.0', 'in_footer');
+		wp_enqueue_script('highlight-call', plugins_url( 'public/js/hl_call.js', __FILE__), ['highlight'], '11.4.0', 'in_footer');
+		
+		wp_localize_script( 'highlight', 'hlajax',
+			array(
+				'url' => admin_url('admin-ajax.php')
+			)
+		);
+	} elseif (isset($codelighter_options['post-types']) && codelighter_by_bmrrr_check_post($codelighter_options['post-types'])) {
+		wp_enqueue_style('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/'.$codelighter_options['style'].'.min.css');
+		wp_enqueue_script('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js', [], '11.4.0', 'in_footer');
+		wp_enqueue_script('highlight-call', plugins_url( 'public/js/hl_call.js', __FILE__), ['highlight'], '11.4.0', 'in_footer');
+		
+		wp_localize_script( 'highlight', 'hlajax',
+			array(
+				'url' => admin_url('admin-ajax.php')
+			)
+		);
+	}
 }
 
 add_action('admin_enqueue_scripts', 'codelighter_enqueue_back');
