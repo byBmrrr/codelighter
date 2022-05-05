@@ -3,7 +3,7 @@
   Plugin Name: CodeLighter
   Plugin URI:
   Description: Simple plugin for highlight code in all post types
-  Version: 1.0.0
+  Version: 0.9.0
   Author:
   Author URI:
   License: GPLv2
@@ -102,7 +102,7 @@ function codelighter_enqueue_front() {
 	}
 }
 
-add_action('admin_enqueue_scripts', 'codelighter_enqueue_back');
+// add_action('admin_enqueue_scripts', 'codelighter_enqueue_back');
 function codelighter_enqueue_back() {
 	global $codelighter_options;
 	wp_enqueue_script('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js', [], '11.4.0', 'in_footer');
@@ -131,16 +131,36 @@ $config = array(
 	// 'access_token' => '', // Access private repositories by authorizing under Plugins > GitHub Updates when this example plugin is installed
 );
 
+
 /*
- *  *******************************************************************************
- * Included files
- *  *******************************************************************************
- */
+*  *******************************************************************************
+* Included files
+*  *******************************************************************************
+*/
+if (isset($_GET['page']) && $_GET['page'] === 'codelighter') {
+	require_once 'admin/index.php';
+	// require_once 'admin/ajax.php';
+	// require_once 'admin/updater/updater.php';
+	add_action('admin_enqueue_scripts', 'codelighter_enqueue_back');
+}
 require_once 'public/index.php';
-require_once 'admin/index.php';
 require_once 'admin/ajax.php';
-require_once 'admin/updater/updater.php';
+
+// require_once 'admin/index.php';
+// require_once 'admin/ajax.php';
+// require_once 'admin/updater/updater.php';
+// add_action( 'current_screen', 'codelighter_require_files' );
+// function codelighter_require_files( $current_screen ) {
+// 	if( 'options-general.php' == $current_screen->parent_file && 'codelighter' == $_GET['page'] ) {
+// 		require_once 'admin/index.php';
+// 		require_once 'admin/ajax.php';
+// 		require_once 'admin/updater/updater.php';
+// 		add_action( 'admin_enqueue_scripts', 'codelighter_enqueue_back' );
+// 	}
+// }
+
 
 if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
+	require_once 'admin/updater/updater.php';
 	new WP_GitHub_Updater($config);
 }
