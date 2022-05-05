@@ -138,12 +138,13 @@ $config = array(
 *  *******************************************************************************
 */
 if (isset($_GET['page']) && $_GET['page'] === 'codelighter') {
-	require_once 'admin/index.php';
+	
 	// require_once 'admin/ajax.php';
 	// require_once 'admin/updater/updater.php';
 	add_action('admin_enqueue_scripts', 'codelighter_enqueue_back');
 }
 require_once 'public/index.php';
+require_once 'admin/index.php';
 require_once 'admin/ajax.php';
 
 // require_once 'admin/index.php';

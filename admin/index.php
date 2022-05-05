@@ -69,17 +69,15 @@ function codelighter_option_post_types()
 		<input type="checkbox" id="codelighter_option_post_types-<?php echo $post_type ?>" name="codelighter[post-types][<?php echo $post_type ?>]" value="<?php echo $post_type; ?>">
 		<label for="codelighter_option_post_types-<?php echo $post_type ?>"><?php echo $post_type ?></label><br>
 	<?php } 
-	// echo '<pre>';
-	// print_r($_GET['page']);
-	// echo '</pre>';
+	
 	// echo('<br>');
 	// $current_screen = get_current_screen();
 	// echo '<pre>';
 	// print_r($current_screen->parent_file);
 	// echo '</pre>';
-	// echo '<pre>';
-	// print_r(get_option('codelighter'));
-	// echo '</pre>'; 
+	echo '<pre>';
+	print_r(get_option('codelighter'));
+	echo '</pre>'; 
 	?>
 	<?php
 }
