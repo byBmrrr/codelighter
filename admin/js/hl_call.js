@@ -114,16 +114,58 @@ fetch(ajaxurl, fetchOptions)
         // let inputs = document.querySelectorAll('input[id^=codelighter_option_post_types-]');
         // console.log(inputs);
         let tmpInpt;
-        resultArray.forEach( item => {
+        resultArray.forEach(item => {
             tmpInpt = `input[id=codelighter_option_post_types-${item}]`;
-            if ( document.querySelector(tmpInpt)) {
-            document.querySelector(tmpInpt).checked = true;
+            if (document.querySelector(tmpInpt)) {
+                document.querySelector(tmpInpt).checked = true;
             }
         })
     })
     .catch(function (err) {
         console.error(err);
     });
+
+
+/*
+ *  *******************************************************************************
+ * Button for check all checkbox with post types
+ *  *******************************************************************************
+ */
+let checkCheckbox = (spanElem) => {
+    console.log(spanElem);
+    spanElem.classList.toggle('checked');
+    let checked = spanElem.classList.contains('checked');
+    let postTypes = document.querySelectorAll('.codelighter_post_type');
+    if (checked) {
+        postTypes.forEach(item => {
+            item.checked = 'true';
+        })
+    } else {
+        postTypes.forEach(item => {
+            item.checked = '';
+        })
+    }
+}
+
+let checkPostTypes = () => {
+    let pElem = document.createElement('p');
+    pElem.classList.add('check-all');
+    let pElemSpan = document.createElement('span');
+    pElem.insertAdjacentElement("afterbegin", pElemSpan);
+    pElem.insertAdjacentText("beforeend", 'Check all');
+    let legendElem = document.querySelector('.check-post-types');
+    legendElem.insertAdjacentElement("afterend", pElem);
+    pElem.addEventListener('click', function (e) {
+        if (e.target.matches('span')) {
+            checkCheckbox(e.target);
+        } else {
+            checkCheckbox(e.target.querySelector('span'));
+        }
+        
+    })
+};
+checkPostTypes();
+
 
 /*
  *  *******************************************************************************

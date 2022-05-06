@@ -63,10 +63,10 @@ function codelighter_option_post_types()
 	$codelighter_val = $codelighter_val ? $codelighter_val['post-types'] : [];
 	$post_types = get_post_types();
 ?>
-	<legend><?php esc_html_e('Choose in what post types CodeLighter will highlight code snippets', 'codelighter') ?></legend>
+	<legend class="check-post-types"><?php esc_html_e('Choose in what post types CodeLighter will highlight code snippets', 'codelighter') ?></legend>
 	<?php
 	foreach ($post_types as $post_type) {?>
-		<input type="checkbox" id="codelighter_option_post_types-<?php echo $post_type ?>" name="codelighter[post-types][<?php echo $post_type ?>]" value="<?php echo $post_type; ?>">
+		<input type="checkbox" class="codelighter_post_type" id="codelighter_option_post_types-<?php echo $post_type ?>" name="codelighter[post-types][<?php echo $post_type ?>]" value="<?php echo $post_type; ?>">
 		<label for="codelighter_option_post_types-<?php echo $post_type ?>"><?php echo $post_type ?></label><br>
 	<?php } 
 	
