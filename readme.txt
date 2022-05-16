@@ -17,8 +17,8 @@ Lightweight WordPress plugin for highlighting code snippets in posts, pages and 
 
 == Changelog ==
 
-= 1.0 =
+= 0.9 =
 
 
 
-~Current Version:1.0~
+~Current Version:0.9~

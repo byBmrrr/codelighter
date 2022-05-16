@@ -3,7 +3,7 @@
   Plugin Name: CodeLighter
   Plugin URI:
   Description: Simple plugin for highlight code in all post types
-  Version: 0.9.0
+  Version: 0.9
   Author:
   Author URI:
   License: GPLv2
@@ -15,19 +15,23 @@
 	exit;
  }
 
+ $start = microtime(true);
+
 /*
  *  *******************************************************************************
  * Activation hook
  *  *******************************************************************************
  */
 
+$post_types = get_post_types(['public' => true]);
+
 register_activation_hook( __FILE__, 'codelighter_by_bmrrr_activate' );
 
 function codelighter_by_bmrrr_activate() {
-	delete_option( 'codelighter' );
+	// delete_option( 'codelighter' );
+	global $post_types;
 	if ( !get_option( 'codelighter' ) ) {
-		$all_post_types = get_post_type([], 'names');
-		add_option( 'codelighter', array( 'style' => 'default', 'post-types' => ['all'] ) );
+		add_option( 'codelighter', array( 'style' => 'default', 'post-types' => $post_types, 'selected-color' => '', 'favorites' => '' ) );
 	}
 }
 
@@ -38,7 +42,7 @@ function codelighter_by_bmrrr_activate() {
  *  *******************************************************************************
  */
 __( 'CodeLighter', 'codelighter' );
-__( 'Simple plugin for highlight code', 'codelighter' );
+__( 'Lightweight WordPress plugin for highlighting code snippets in posts, pages and other custom post types', 'codelighter' );
 
 
 /*
@@ -60,6 +64,7 @@ function codelighter_init() {
  *  *******************************************************************************
  */
 $codelighter_options = get_option( 'codelighter');
+
 function codelighter_by_bmrrr_check_post ($post_types) {
 	foreach($post_types as $post_type) {
 		if ( is_singular( $post_type ) ) {
@@ -79,7 +84,8 @@ function codelighter_by_bmrrr_check_post ($post_types) {
 add_action('wp_enqueue_scripts', 'codelighter_enqueue_front', PHP_INT_MAX);
 function codelighter_enqueue_front() {
 	global $codelighter_options;
-	if (isset($codelighter_options['post-types']) && $codelighter_options['post-types'] === ['all']) {
+	global $post_types;
+	if (isset($codelighter_options['post-types']) && $codelighter_options['post-types'] === $post_types) {
 		wp_enqueue_style('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/'.$codelighter_options['style'].'.min.css');
 		wp_enqueue_script('highlight', '//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js', [], '11.4.0', 'in_footer');
 		wp_enqueue_script('highlight-call', plugins_url( 'public/js/hl_call.js', __FILE__), ['highlight'], '11.4.0', 'in_footer');
@@ -137,19 +143,6 @@ $config = array(
 * Included files
 *  *******************************************************************************
 */
-if (isset($_GET['page']) && $_GET['page'] === 'codelighter') {
-	
-	// require_once 'admin/ajax.php';
-	// require_once 'admin/updater/updater.php';
-	add_action('admin_enqueue_scripts', 'codelighter_enqueue_back');
-}
-require_once 'public/index.php';
-require_once 'admin/index.php';
-require_once 'admin/ajax.php';
-
-// require_once 'admin/index.php';
-// require_once 'admin/ajax.php';
-// require_once 'admin/updater/updater.php';
 // add_action( 'current_screen', 'codelighter_require_files' );
 // function codelighter_require_files( $current_screen ) {
 // 	if( 'options-general.php' == $current_screen->parent_file && 'codelighter' == $_GET['page'] ) {
@@ -164,4 +157,12 @@ require_once 'admin/ajax.php';
 if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
 	require_once 'admin/updater/updater.php';
 	new WP_GitHub_Updater($config);
+	require_once 'admin/index.php';
+	require_once 'admin/ajax.php';
+	if (isset($_GET['page']) && $_GET['page'] === 'codelighter') {		
+		add_action('admin_enqueue_scripts', 'codelighter_enqueue_back');
+	}
+} else {
+	require_once 'public/index.php';
 }
+do_action( 'qm/debug', 'Script execution time: '.round(microtime(true) - $start, 4).' sec' );

@@ -61,7 +61,7 @@ function codelighter_option_post_types()
 {
 	$codelighter_val = get_option('codelighter');
 	$codelighter_val = $codelighter_val ? $codelighter_val['post-types'] : [];
-	$post_types = get_post_types();
+	global $post_types;
 ?>
 	<legend class="check-post-types"><?php esc_html_e('Choose in what post types CodeLighter will highlight code snippets', 'codelighter') ?></legend>
 	<?php
