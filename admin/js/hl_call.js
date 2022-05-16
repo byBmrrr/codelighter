@@ -120,6 +120,17 @@ fetch(ajaxurl, fetchOptions)
                 document.querySelector(tmpInpt).checked = true;
             }
         })
+        let checkboxes = document.querySelectorAll('input[id*=codelighter_option_post_types-]');
+        let checkboxCheked = true;
+        for (let i = 0; i<checkboxes.length; i++) {
+            if (!checkboxes[i].checked) {
+                checkboxCheked = false;
+                break;
+            }
+        }
+        if (checkboxCheked) {
+            document.querySelector('.check-all span').classList.add('checked');
+        }
     })
     .catch(function (err) {
         console.error(err);
@@ -132,7 +143,6 @@ fetch(ajaxurl, fetchOptions)
  *  *******************************************************************************
  */
 let checkCheckbox = (spanElem) => {
-    console.log(spanElem);
     spanElem.classList.toggle('checked');
     let checked = spanElem.classList.contains('checked');
     let postTypes = document.querySelectorAll('.codelighter_post_type');
