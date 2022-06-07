@@ -2,7 +2,7 @@
 /*
   Plugin Name: CodeLighter
   Plugin URI:
-  Description: Simple plugin for highlight code in all post types
+  Description: Lightweight WordPress plugin for highlighting code snippets in posts, pages and other custom post types based on library <a href="https://highlightjs.org/">highlight.js</a>
   Version: 0.9
   Author: Bmrrr
   Author URI: http://bmrrr.pp.ua

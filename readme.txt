@@ -10,7 +10,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 == Description ==
-Lightweight WordPress plugin for highlighting code snippets in posts, pages and other custom post types
+Lightweight WordPress plugin for highlighting code snippets in posts, pages and other custom post types based on library https://highlightjs.org/
 
 == Installation ==
 
