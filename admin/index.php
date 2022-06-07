@@ -9,12 +9,41 @@
 
 
 require_once 'functions.php';
+// require_once 'cron.php';
+
+/**
+ * Check if isset get parameter refresh_files
+ * And if it isset update or download style files
+ */
+function get_request_parameter( $key, $default = 'false' ) {
+    // If not request set
+    if ( ! isset( $_REQUEST[ $key ] ) || empty( $_REQUEST[ $key ] ) ) {
+        return $default;
+    }
+ 
+    // Set so process it
+    return (bool) strip_tags(  wp_unslash( $_REQUEST[ $key ] ) );
+}
+
+// if ($codelighter_get_refresh = get_request_parameter('refresh_files')){
+// 	add_action( 'load-'.CODELIGHTER_PAGE_HOOK, 'codelighter_plugin_loaded_hook' );
+// 	function codelighter_plugin_loaded_hook() {
+// 		add_action( 'all_admin_notices', 'codelighter_plugin_loaded' );
+// 		function codelighter_plugin_loaded(  ){
+// 			require_once 'admin/cron.php';
+// 		}
+// 	}
+// 	do_action( 'qm/debug', CODELIGHTER_PAGE_HOOK );
+// }
+
 
 add_action('admin_menu', 'codelighter_add_plugin_page');
+$codelighter_page_hook;
 
 function codelighter_add_plugin_page()
 {
-	add_options_page(__('Codelighter Settings', 'codelighter'), 'Codelighter', 'manage_options', 'codelighter', 'codelighter_options_page_output');
+	global $codelighter_page_hook;
+	$codelighter_page_hook = add_options_page(__('Codelighter Settings', 'codelighter'), 'Codelighter', 'manage_options', 'codelighter', 'codelighter_options_page_output');
 }
 
 function codelighter_options_page_output()
@@ -22,7 +51,7 @@ function codelighter_options_page_output()
 ?>
 	<div class="wrap">
 		<h2><?php echo get_admin_page_title() ?></h2>
-
+		<?php settings_errors(  ); ?>
 		<form action="options.php" method="POST">
 			<?php
 			settings_fields('codelighter_group');  // скрытые защитные поля
@@ -52,7 +81,7 @@ function codelighter_plugin_settings()
 	add_settings_field('codelighter_option_post_types', __('Choose post types', 'codelighter'), 'codelighter_option_post_types', 'codelighter_page', 'codelighter_main_settings');
 	add_settings_field('codelighter_option_style', __('Choose highlight style', 'codelighter'), 'codelighter_option_style', 'codelighter_page', 'codelighter_main_settings');
 	add_settings_field('codelighter_option_selected_color', __('Selected color', 'codelighter'), 'codelighter_option_selected_color', 'codelighter_page', 'codelighter_main_settings');
-	add_settings_field('codelighter_option_favorites', __('Write here what you want', 'codelighter'), 'codelighter_option_favorites', 'codelighter_page', 'codelighter_main_settings');
+	add_settings_field('codelighter_option_update_style_files', __('Write here what you want', 'codelighter'), 'codelighter_option_update_style_files', 'codelighter_page', 'codelighter_main_settings');
 }
 
 ## Selected color input
@@ -80,6 +109,9 @@ function codelighter_option_style()
 {
 	$codelighter_val = get_option('codelighter');
 	$codelighter_val = $codelighter_val ? $codelighter_val['style'] : 'default';
+
+	require_once 'functions.php';
+	
 	$codelighter_styles_list_object = codelighter_get_styles_list_object();
 	if (is_object($codelighter_styles_list_object)) {
 		if ($codelighter_styles_list_object->message ?? false) {
@@ -139,15 +171,15 @@ function codelighter_option_selected_color()
 <?php
 }
 
-## Text area for save anithing
+## Button for update style files
 
-function codelighter_option_favorites()
+function codelighter_option_update_style_files()
 {
 	$codelighter_val = get_option('codelighter');
 	$codelighter_val = $codelighter_val ? $codelighter_val['favorites'] : '';
 ?>
-	<label for="cl-ta"><?php esc_html_e('Write here your favorite styles', 'codelighter') ?></label><br>
-	<textarea id="codelighter_option_favorites" name="codelighter[favorites]" rows="10" cols="50"><?php echo $codelighter_val; ?></textarea> <br>
+	<p><?php esc_html_e('Press Refresh button for update style files', 'codelighter') ?></p> 
+	<p><a href="<?php echo CODELIGHTER_URL.'&refresh_files=true' ?>" class="button"><?php esc_html_e('Refresh', 'codelighter') ?></a></p>
 <?php
 }
 

@@ -2,7 +2,7 @@
 Contributors: Bmrrr (github: @byBmrrr)
 Donate link: 
 Tags: 
-Requires at least: 3.2
+Requires at least: 5.1
 Tested up to: 5.9.3
 Stable tag: 
 License: GPLv2 or later

@@ -4,8 +4,8 @@
   Plugin URI:
   Description: Simple plugin for highlight code in all post types
   Version: 0.9
-  Author:
-  Author URI:
+  Author: Bmrrr
+  Author URI: http://bmrrr.pp.ua
   License: GPLv2
  */
 
@@ -16,6 +16,15 @@
  }
 
  $start = microtime(true);
+
+/*
+ *  *******************************************************************************
+ * Plugin constants
+ *  *******************************************************************************
+ */
+ define( 'CODELIGHTER_PATH', plugin_dir_path( __FILE__ ) );
+ define( 'CODELIGHTER_URL', 'options-general.php?page=codelighter' );
+ define( 'CODELIGHTER_PAGE_HOOK', 'settings_page_codelighter' );
 
 /*
  *  *******************************************************************************
@@ -31,7 +40,7 @@ function codelighter_by_bmrrr_activate() {
 	// delete_option( 'codelighter' );
 	global $post_types;
 	if ( !get_option( 'codelighter' ) ) {
-		add_option( 'codelighter', array( 'style' => 'default', 'post-types' => $post_types, 'selected-color' => '', 'favorites' => '' ) );
+		add_option( 'codelighter', array( 'style' => 'default', 'post-types' => $post_types, 'selected-color' => '', 'styles-count' => 0 ) );
 	}
 }
 
@@ -41,8 +50,8 @@ function codelighter_by_bmrrr_activate() {
  * For translate plugin name and description
  *  *******************************************************************************
  */
-__( 'CodeLighter', 'codelighter' );
-__( 'Lightweight WordPress plugin for highlighting code snippets in posts, pages and other custom post types', 'codelighter' );
+esc_html__( 'CodeLighter', 'codelighter' );
+esc_html__( 'Lightweight WordPress plugin for highlighting code snippets in posts, pages and other custom post types', 'codelighter' );
 
 
 /*
@@ -50,9 +59,6 @@ __( 'Lightweight WordPress plugin for highlighting code snippets in posts, pages
  * Loading text domain
  *  *******************************************************************************
  */
-//add_action( 'plugins_loaded', function(){
-//	load_plugin_textdomain( 'codelighter', false, plugins_url( 'lang/', __FILE__) );
-//} );
 add_action( 'plugins_loaded', 'codelighter_init' );
 function codelighter_init() {
 	 load_plugin_textdomain( 'codelighter', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
@@ -157,12 +163,41 @@ $config = array(
 if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
 	require_once 'admin/updater/updater.php';
 	new WP_GitHub_Updater($config);
-	require_once 'admin/index.php';
+	include_once 'admin/index.php';
 	require_once 'admin/ajax.php';
 	if (isset($_GET['page']) && $_GET['page'] === 'codelighter') {		
 		add_action('admin_enqueue_scripts', 'codelighter_enqueue_back');
 	}
+	if (true === get_request_parameter('refresh_files')){
+		add_action( 'load-'.CODELIGHTER_PAGE_HOOK, 'codelighter_plugin_loaded_hook' );
+		function codelighter_plugin_loaded_hook() {
+			add_action( 'all_admin_notices', 'codelighter_plugin_loaded' );
+			function codelighter_plugin_loaded(  ){
+				require_once 'admin/cron.php';
+				// exit();
+			}
+		}
+	}
 } else {
 	require_once 'public/index.php';
 }
+
+// if (true === get_request_parameter('refresh_files')){
+// 	add_action( 'load-'.CODELIGHTER_PAGE_HOOK, 'codelighter_plugin_loaded_hook' );
+// 	function codelighter_plugin_loaded_hook() {
+// 		add_action( 'all_admin_notices', 'codelighter_plugin_loaded' );
+// 		function codelighter_plugin_loaded(  ){
+// 			require_once 'admin/cron.php';
+// 		}
+// 	}
+// }
+
+
+add_filter( 'plugin_action_links_'.plugin_basename(__FILE__), 'codelighter_add_settings_link');
+function codelighter_add_settings_link($links) {
+	$codelighter_settings_link = '<a href="'.CODELIGHTER_URL.'">'.esc_html__( 'Settings', 'codelighter' ).'</a>';
+	array_push($links, $codelighter_settings_link);
+	return $links;
+}
+
 do_action( 'qm/debug', 'Script execution time: '.round(microtime(true) - $start, 4).' sec' );

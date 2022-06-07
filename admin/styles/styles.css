@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     Author     : boomer
 */
 
+* {
+    transition: all .3s linear;
+}
+
 #cl-preview-code,
 .loading {
     position: relative;
@@ -60,7 +64,7 @@ p.check-all {
 p.check-all span {
     border: 1px solid #8c8f94;
     border-radius: 4px;
-    background: #fff;
+    /* background: #000; */
     color: #50575e;
     clear: none;
     display: inline-block;
@@ -83,4 +87,24 @@ p.check-all span.checked::after {
     margin: -0.1875rem 0 0 -0.25rem;
     width: 21px;
     display: block;
+}
+
+
+.info {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+}
+.info:before {
+    content: "";
+    background-image: url(../img/check-mark.svg);
+    width: 30px;
+    height: 30px;
+    display: block;
+}
+.info span {
+    color: green;
+}
+.info p {
+    color: green;
 }

@@ -17,17 +17,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-function codelighter_get_styles_list_object() {
-	$codelighter_curl_init = curl_init( 'https://api.github.com/repos/highlightjs/highlight.js/git/trees/cb8292f8e1ff39b922de12012908d9f67bc73346' );
+
+function codelighter_worning_notice_styles_list() {
+	?>
+	<div class="notice notice-warning is-dismissible">
+		<?php esc_html_e( 'Plugin can`t get all styles!', 'codelighter' ); ?>
+	</div>
+	<?php
+}
+
+
+function codelighter_get_styles_list_object($url = 'https://api.github.com/repos/highlightjs/highlight.js/git/trees/cb8292f8e1ff39b922de12012908d9f67bc73346') {
+	$codelighter_curl_init = curl_init( $url );
 	curl_setopt( $codelighter_curl_init, CURLOPT_RETURNTRANSFER, 'true');
 	curl_setopt( $codelighter_curl_init, CURLOPT_HTTPHEADER, array('User-Agent: WordPress', 'POST / HTTP/1.1'));
-	$codelighter_file_list_array = curl_exec( $codelighter_curl_init );
+	$codelighter_file_list_object = curl_exec( $codelighter_curl_init );
 	$codelighter_curl_errno = curl_errno($codelighter_curl_init);
 	$codelighter_curl_error = curl_error($codelighter_curl_init);
 	curl_close($codelighter_curl_init);
 	if ($codelighter_curl_errno > 0) {
-		return "cURL Error ($codelighter_curl_errno): $codelighter_curl_error\n";
+		do_action( 'qm/error', "cURL Error ($codelighter_curl_errno): $codelighter_curl_error" );
+		add_action( 'admin_notices', 'codelighter_worning_notice_styles_list' );
+        
+		return new WP_Error("cURL Error ($codelighter_curl_errno): ", $codelighter_curl_error);
+		// return "cURL Error ($codelighter_curl_errno): $codelighter_curl_error\n";
 	} else {
-		return json_decode( $codelighter_file_list_array );
+		// do_action( 'qm/debug', json_decode( $codelighter_file_list_object) );
+		return json_decode( $codelighter_file_list_object );
 	}
 }
